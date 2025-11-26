@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinBot AI</title>
+    <!-- Favicon and title icon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/finchatbot.ico') }}" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/finchatbot-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/finchatbot-16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/finchatbot-180.png') }}">
+    <style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 800px;
+        height: 90vh;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    /* Logo + title layout */
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .logo {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        background: white;
+        flex: 0 0 64px;
+    }
+
+    .header-text {
+        text-align: left;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
+    .chat-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f5f5f5;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .message.user {
+        justify-content: flex-end;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+
+    .message.bot .message-bubble {
+        background: white;
+        color: #333;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .message.user .message-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .input-container {
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        font-size: 16px;
+        outline: none;
+        transition: border 0.3s;
+    }
+
+    #user-input:focus {
+        border-color: #667eea;
+    }
+
+    #send-btn {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+
+    #send-btn:hover {
+        transform: scale(1.05);
+    }
+
+    #send-btn:active {
+        transform: scale(0.95);
+    }
+
+    .typing-indicator {
+        display: none;
+        padding: 10px;
+        background: white;
+        border-radius: 18px;
+        width: 60px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .typing-indicator span {
+    
+    
+    
+        width: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 2px;
+        animation: bounce 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-10px); }
+    }
+
+    .quick-actions {
+        padding: 10px 20px;
+        background: #f9f9f9;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .quick-btn {
+        padding: 8px 16px;
+        background: white;
+        border: 1px solid #667eea;
+        color: #667eea;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .quick-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    /* Debug panel (temporary) */
+    #debug-panel {
+        font-family: monospace;
+        font-size: 12px;
+        background: rgba(0,0,0,0.06);
+        color: #222;
+        padding: 8px;
+        border-radius: 6px;
+        margin: 10px 20px;
+        max-height: 120px;
+        overflow: auto;
+        display: none; /* hidden by default */
+    }
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+    <!-- Favicon and title icon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/finchatbot.ico') }}" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/finchatbot-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/finchatbot-16.png') }}">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='images/finchatbot.jpg') }}" alt="FinChatbot logo" class="logo">
+                <div class="header-text">
+                    <h1> FinBot — Your All-in-One Financial Companion </h1>
+                    <p>Monitor expenses, grow your savings, and stay on top of your finances with one easy click</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/">Chat</a>
+                <a href="/analytics">Analytics</a>
+            </div>
+        </div>
+        <div class="chat-container" id="chat-container">
+        <div class="message bot">
+            <div class="message-bubble">
+                Hello! I'm your Financial Assistant. 👋<br><br>
+                You can:<br>
+                • Record expenses: "I spent 50 on lunch"<br>
+                • Check spending: "Show today summary"<br>
+                • Get advice: "How can I save money?"
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <button class="quick-btn" onclick="quickMessage('Show today summary')">Today's Summary</button>
+        <button class="quick-btn" onclick="quickMessage('Show this week summary')">Weekly Summary</button>
+        <button class="quick-btn" onclick="quickMessage('How can I save money?')">Saving Tips</button>
+        <button class="quick-btn" onclick="quickMessage('Delete last transaction')">Delete Last</button>
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    function addMessage(message, isUser) {
+        const chatContainer = document.getElementById('chat-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble';
+        bubbleDiv.textContent = message;
+        
+        messageDiv.appendChild(bubbleDiv);
+        chatContainer.appendChild(messageDiv);
+        
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const chatContainer = document.getElementById('chat-container');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = '<div class="typing-indicator" style="display: block;"><span></span><span></span><span></span></div>';
+        chatContainer.appendChild(typingDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        addMessage(message, true);
+        input.value = '';
+        
+        showTypingIndicator();
+        
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            });
+            
+            const data = await response.json();
+            // Debug: log full response and show raw JSON in the debug panel
+            console.log('Chat response:', data);
+            const dbg = document.getElementById('debug-panel');
+            if (dbg) {
+                dbg.style.display = 'block';
+                try {
+                    dbg.textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    dbg.textContent = String(data);
+                }
+            }
+
+            removeTypingIndicator();
+            // Prefer the server 'response' field, fall back to raw JSON string for diagnostics
+            const botText = (data && data.response) ? data.response : JSON.stringify(data);
+            addMessage(botText, false);
+        } catch (error) {
+            removeTypingIndicator();
+            addMessage('Sorry, something went wrong. Please try again.', false);
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    function quickMessage(message) {
+        document.getElementById('user-input').value = message;
+        sendMessage();
+    }
+</script>
