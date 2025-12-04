@@ -65,6 +65,16 @@ def chat():
         if last_transaction:
             transaction_model.delete_transaction(last_transaction['transaction_id'])
         response_text = response_gen.generate_response(intent, transaction=last_transaction)
+
+    elif intent == 'update':
+        # Attempt to perform update based on parsed fields
+        response_text = response_gen.generate_response(
+            intent,
+            amount=parsed.get('amount'),
+            category_id=parsed.get('category_id'),
+            category_name=parsed.get('category_name'),
+            date=parsed.get('date')
+        )
     
     elif intent in ['greeting', 'help', 'advice']:
         response_text = response_gen.generate_response(intent)

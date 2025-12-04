@@ -93,3 +93,56 @@ def is_help_request(message):
     """Check if message is help request"""
     message_lower = message.lower()
     return any(keyword in message_lower for keyword in HELP_KEYWORDS)
+
+
+def is_update_request(message):
+    """Check if message is an update request"""
+    message_lower = message.lower()
+    return any(keyword in message_lower for keyword in UPDATE_KEYWORDS)
+
+
+def extract_date(message):
+    """Extract a date from a message. Supports formats like 'on december 1' or 'december'.
+
+    Returns a datetime.datetime or None.
+    """
+    import re
+    from datetime import datetime
+
+    message_lower = message.lower()
+
+    months = {
+        'january': 1, 'jan': 1,
+        'february': 2, 'feb': 2,
+        'march': 3, 'mar': 3,
+        'april': 4, 'apr': 4,
+        'may': 5,
+        'june': 6, 'jun': 6,
+        'july': 7, 'jul': 7,
+        'august': 8, 'aug': 8,
+        'september': 9, 'sep': 9, 'sept': 9,
+        'october': 10, 'oct': 10,
+        'november': 11, 'nov': 11,
+        'december': 12, 'dec': 12
+    }
+
+    # Look for patterns like 'on december 1' or 'december 1' or 'december'
+    pattern = re.compile(r"(?:on\s+)?(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\s*(\d{1,2})?", re.IGNORECASE)
+    m = pattern.search(message_lower)
+    if m:
+        month_str = m.group(1)
+        day_str = m.group(2)
+        month = months.get(month_str.lower())
+        now = datetime.now()
+        year = now.year
+        try:
+            day = int(day_str) if day_str else 1
+        except Exception:
+            day = 1
+
+        try:
+            return datetime(year, month, day)
+        except Exception:
+            return None
+
+    return None

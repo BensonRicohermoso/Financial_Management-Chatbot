@@ -12,7 +12,7 @@ class Config:
     DEFAULT_CATEGORIES = [
         ('Food', 'expense', 'lunch,dinner,breakfast,meal,food,restaurant,ate,eat,groceries,snack,coffee'),
         ('Transportation', 'expense', 'taxi,jeep,bus,fare,gas,commute,grab,uber,transport,travel'),
-        ('Bills', 'expense', 'electricity,water,internet,rent,bill,utilities'),
+        ('Bills', 'expense', 'electricity,water,intern  et,rent,bill,utilities'),
         ('Entertainment', 'expense', 'movie,cinema,concert,game,entertainment,fun,party'),
         ('Shopping', 'expense', 'shopping,clothes,shoes,mall,bought,purchase'),
         ('Health', 'expense', 'medicine,doctor,hospital,health,medical,pharmacy'),
