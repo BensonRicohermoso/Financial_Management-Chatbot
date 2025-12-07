@@ -1,8 +1,8 @@
 import os
 
 class Config:
-    # Database
-    DATABASE_PATH = 'financial_chatbot.db'
+    # Database - use /tmp for Vercel serverless environment
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('VERCEL') else 'financial_chatbot.db')
     
     # Flask
     SECRET_KEY = 'your-secret-key-change-in-production'

@@ -129,3 +129,6 @@ if __name__ == '__main__':
     # Disable the automatic reloader so the server runs in this process
     # and logs appear reliably in the terminal.
     app.run(debug=True, port=5000, use_reloader=False)
+
+# For Vercel deployment - export app at module level
+application = app
