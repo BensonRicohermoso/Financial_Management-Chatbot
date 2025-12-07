@@ -169,12 +169,103 @@
             height: auto;
             border-radius: 10px;
         }
+        
+        canvas {
+            max-height: 400px;
+        }
 
         .loading {
             text-align: center;
             padding: 40px;
             color: white;
             font-size: 18px;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .nav-links a {
+                text-align: center;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .period-selector {
+                gap: 5px;
+            }
+            
+            .period-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+                flex: 1;
+                min-width: calc(50% - 5px);
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-card .amount {
+                font-size: 28px;
+            }
+            
+            .chart-card {
+                padding: 15px;
+            }
+            
+            .chart-card h2 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            
+            canvas {
+                max-height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .period-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .stat-card .amount {
+                font-size: 24px;
+            }
+            
+            canvas {
+                max-height: 250px;
+            }
         }
     </style>
 </head>
@@ -314,12 +405,28 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: { 
+                            display: false 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '₱' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
                     },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toFixed(0);
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -347,10 +454,25 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: window.innerWidth < 768 ? 'bottom' : 'right',
+                            labels: {
+                                boxWidth: window.innerWidth < 768 ? 12 : 15,
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return label + ': ₱' + value.toFixed(2);
+                                }
+                            }
                         }
                     }
                 }
@@ -375,12 +497,45 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true }
+                        legend: { 
+                            display: true,
+                            labels: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ₱' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
                     },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toFixed(0);
+                                },
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: window.innerWidth < 768 ? 45 : 0,
+                                minRotation: window.innerWidth < 768 ? 45 : 0,
+                                font: {
+                                    size: window.innerWidth < 768 ? 9 : 11
+                                }
+                            }
+                        }
                     }
                 }
             });
