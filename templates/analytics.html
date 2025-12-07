@@ -9,8 +9,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/finchatbot-32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/finchatbot-16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/finchatbot-180.png') }}">
-
     
+    <!-- Chart.js for rendering charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -248,7 +249,7 @@
                 html += `
                     <div class="chart-card">
                         <h2>Savings vs Expenses</h2>
-                        <img src="data:image/png;base64,${data.charts.comparison}" class="chart-img" alt="Comparison Chart">
+                        <canvas id="comparisonChart"></canvas>
                     </div>
                 `;
             }
@@ -257,7 +258,7 @@
                 html += `
                     <div class="chart-card">
                         <h2>Spending by Category</h2>
-                        <img src="data:image/png;base64,${data.charts.pie}" class="chart-img" alt="Category Pie Chart">
+                        <canvas id="pieChart"></canvas>
                     </div>
                 `;
             }
@@ -266,7 +267,7 @@
                 html += `
                     <div class="chart-card">
                         <h2>Spending Trend</h2>
-                        <img src="data:image/png;base64,${data.charts.trend}" class="chart-img" alt="Trend Chart">
+                        <canvas id="trendChart"></canvas>
                     </div>
                 `;
             }
@@ -274,6 +275,115 @@
             html += '</div>';
             
             content.innerHTML = html;
+            
+            // Render charts after DOM is updated
+            setTimeout(() => {
+                if (data.charts.comparison) {
+                    renderBarChart('comparisonChart', data.charts.comparison);
+                }
+                if (data.charts.pie) {
+                    renderPieChart('pieChart', data.charts.pie);
+                }
+                if (data.charts.trend) {
+                    renderLineChart('trendChart', data.charts.trend);
+                }
+            }, 100);
+        }
+
+        function renderBarChart(canvasId, chartData) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Amount (₱)',
+                        data: chartData.data,
+                        backgroundColor: [
+                            'rgba(46, 204, 113, 0.7)',  // Savings - green
+                            'rgba(231, 76, 60, 0.7)',   // Expenses - red
+                            'rgba(52, 152, 219, 0.7)'   // Net - blue
+                        ],
+                        borderColor: [
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(52, 152, 219, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderPieChart(canvasId, chartData) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        data: chartData.data,
+                        backgroundColor: [
+                            'rgba(231, 76, 60, 0.7)',
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(241, 196, 15, 0.7)',
+                            'rgba(230, 126, 34, 0.7)',
+                            'rgba(149, 165, 166, 0.7)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderLineChart(canvasId, chartData) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Daily Spending (₱)',
+                        data: chartData.data,
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
         }
 
         // Load initial analytics
