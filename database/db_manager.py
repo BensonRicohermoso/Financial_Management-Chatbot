@@ -1,12 +1,18 @@
 import sqlite3
-import psycopg2
-from psycopg2.extras import RealDictCursor
 from datetime import datetime
 from config import Config
 
+# Try to import psycopg2, but don't fail if not available
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    HAS_POSTGRES = True
+except ImportError:
+    HAS_POSTGRES = False
+
 class DatabaseManager:
     def __init__(self, db_path=None):
-        self.use_postgres = Config.USE_POSTGRES
+        self.use_postgres = Config.USE_POSTGRES and HAS_POSTGRES
         if self.use_postgres:
             self.db_url = Config.DATABASE_URL
         else:
