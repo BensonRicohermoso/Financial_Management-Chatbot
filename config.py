@@ -2,9 +2,10 @@ import os
 
 class Config:
     # Database configuration
-    # For PostgreSQL (Supabase): Use DATABASE_URL environment variable
-    # For SQLite (local/Vercel fallback): Use DATABASE_PATH
-    DATABASE_URL = os.environ.get('DATABASE_URL', None)
+    # Vercel Postgres uses POSTGRES_URL environment variable
+    # Fallback to DATABASE_URL for other PostgreSQL providers (Supabase, etc.)
+    # Use SQLite if neither is set
+    DATABASE_URL = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
     DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('VERCEL') else 'financial_chatbot.db')
     
     # Use PostgreSQL if DATABASE_URL is set, otherwise SQLite
