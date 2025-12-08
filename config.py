@@ -1,13 +1,12 @@
 import os
 
 class Config:
-    # Database configuration - use SQLite for simplicity
-    # For Railway/production: set DATABASE_URL environment variable for PostgreSQL
-    DATABASE_URL = None  # Disable PostgreSQL for now
-    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('VERCEL') else 'financial_chatbot.db')
+    # Database - use /tmp for Vercel serverless environment
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('VERCEL') else 'financial_chatbot.db')
     
-    # Use PostgreSQL only if explicitly enabled
-    USE_POSTGRES = False
+    # Flask
+    SECRET_KEY = 'your-secret-key-change-in-production'
+    DEBUG = True
     
     # Flask
     SECRET_KEY = 'your-secret-key-change-in-production'
