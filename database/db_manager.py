@@ -21,8 +21,18 @@ class DatabaseManager:
     
     def get_connection(self):
         if self.use_postgres:
-            # Add SSL mode for Railway/cloud PostgreSQL
-            conn = psycopg2.connect(self.db_url, cursor_factory=RealDictCursor, sslmode='require')
+            # Parse connection URL and add SSL for Railway/cloud PostgreSQL
+            import urllib.parse as urlparse
+            url = urlparse.urlparse(self.db_url)
+            conn = psycopg2.connect(
+                database=url.path[1:],
+                user=url.username,
+                password=url.password,
+                host=url.hostname,
+                port=url.port,
+                cursor_factory=RealDictCursor,
+                sslmode='require'
+            )
         else:
             conn = sqlite3.connect(self.db_path)
             conn.row_factory = sqlite3.Row
