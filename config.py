@@ -1,15 +1,13 @@
 import os
 
 class Config:
-    # Database configuration
-    # Vercel Postgres uses POSTGRES_URL environment variable
-    # Fallback to DATABASE_URL for other PostgreSQL providers (Supabase, etc.)
-    # Use SQLite if neither is set
-    DATABASE_URL = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
-    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('VERCEL') else 'financial_chatbot.db')
+    # Database configuration - use SQLite for simplicity
+    # For Railway/production: set DATABASE_URL environment variable for PostgreSQL
+    DATABASE_URL = None  # Disable PostgreSQL for now
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('VERCEL') else 'financial_chatbot.db')
     
-    # Use PostgreSQL if DATABASE_URL is set, otherwise SQLite
-    USE_POSTGRES = DATABASE_URL is not None
+    # Use PostgreSQL only if explicitly enabled
+    USE_POSTGRES = False
     
     # Flask
     SECRET_KEY = 'your-secret-key-change-in-production'
