@@ -1,8 +1,14 @@
 import os
 
 class Config:
-    # Database - use /tmp for Vercel serverless environment
-    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/financial_chatbot.db' if os.environ.get('VERCEL') else 'financial_chatbot.db')
+    # Database configuration
+    # For PostgreSQL (Supabase): Use DATABASE_URL environment variable
+    # For SQLite (local fallback): Use DATABASE_PATH
+    DATABASE_URL = os.environ.get('DATABASE_URL', None)
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', 'financial_chatbot.db')
+    
+    # Use PostgreSQL if DATABASE_URL is set, otherwise SQLite
+    USE_POSTGRES = DATABASE_URL is not None
     
     # Flask
     SECRET_KEY = 'your-secret-key-change-in-production'
