@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, jsonify
 from chatbot.message_parser import MessageParser
 from chatbot.response_generator import ResponseGenerator
@@ -126,9 +127,11 @@ def get_recent_transactions():
     return jsonify({'response': response})
 
 if __name__ == '__main__':
+    # Get port from environment variable (Railway, Heroku, etc.) or default to 5000
+    port = int(os.environ.get('PORT', 5000))
     # Disable the automatic reloader so the server runs in this process
     # and logs appear reliably in the terminal.
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)
 
 # For Vercel deployment - export app at module level
 application = app
