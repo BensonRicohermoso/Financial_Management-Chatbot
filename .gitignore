@@ -43,3 +43,6 @@ financial_chatbot.db
 # Secrets
 .env
 *.pem
+
+# Defense guide (private)
+DEFENSE_GUIDE.txt
