@@ -13,6 +13,9 @@ class ResponseGenerator:
         if intent == 'ambiguous':
             return self.ambiguous_action_response(kwargs.get('conflicting_actions'))
         
+        elif intent == 'missing_amount':
+            return self.missing_amount_response(kwargs.get('action'))
+        
         elif intent == 'greeting':
             return self.get_predefined_response('greeting')
         
@@ -63,6 +66,12 @@ class ResponseGenerator:
                 f"• 'spent 150 on food' - to record\n"
                 f"• 'delete food' - to delete\n"
                 f"• 'update 250 in food on december 1' - to update")
+    
+    def missing_amount_response(self, action):
+        """Generate response for missing amount in transaction"""
+        action_text = "spent" if action == "expense" else "saved"
+        return (f"⚠️ Please include an amount. "
+                f"Example: '{action_text} 150 on food'")
     
     def transaction_recorded_response(self, amount, category_name, action):
         """Generate response for recorded transaction"""

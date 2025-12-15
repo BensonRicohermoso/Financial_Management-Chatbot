@@ -65,6 +65,12 @@ class MessageParser:
         amount = extract_amount(message)
         action = extract_action(message)
 
+        # Check if user has action keyword but no amount
+        if action and not amount:
+            result['intent'] = 'missing_amount'
+            result['action'] = action
+            return result
+
         if amount and action:
             result['intent'] = 'record_transaction'
             result['amount'] = amount

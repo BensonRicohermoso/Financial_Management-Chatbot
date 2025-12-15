@@ -45,6 +45,12 @@ def chat():
             conflicting_actions=parsed.get('conflicting_actions')
         )
     
+    elif intent == 'missing_amount':
+        response_text = response_gen.generate_response(
+            intent,
+            action=parsed.get('action')
+        )
+    
     elif intent == 'record_transaction':
         # Record transaction
         transaction_id = transaction_model.create_transaction(
