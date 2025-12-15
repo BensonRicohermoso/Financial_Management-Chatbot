@@ -39,7 +39,13 @@ def chat():
     chart_data = None
     
     # Handle different intents
-    if intent == 'record_transaction':
+    if intent == 'ambiguous':
+        response_text = response_gen.generate_response(
+            intent,
+            conflicting_actions=parsed.get('conflicting_actions')
+        )
+    
+    elif intent == 'record_transaction':
         # Record transaction
         transaction_id = transaction_model.create_transaction(
             transaction_type=parsed['action'],

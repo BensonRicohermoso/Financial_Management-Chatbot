@@ -21,6 +21,13 @@ class MessageParser:
             'date': datetime.now()
         }
 
+        # Check for conflicting keywords first
+        has_conflict, conflicting_actions = has_conflicting_keywords(message)
+        if has_conflict:
+            result['intent'] = 'ambiguous'
+            result['conflicting_actions'] = conflicting_actions
+            return result
+
         # Determine intent
         if is_greeting(message):
             result['intent'] = 'greeting'

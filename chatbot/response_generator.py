@@ -10,7 +10,10 @@ class ResponseGenerator:
     def generate_response(self, intent, **kwargs):
         """Generate appropriate response based on intent"""
         
-        if intent == 'greeting':
+        if intent == 'ambiguous':
+            return self.ambiguous_action_response(kwargs.get('conflicting_actions'))
+        
+        elif intent == 'greeting':
             return self.get_predefined_response('greeting')
         
         elif intent == 'help':
@@ -51,6 +54,15 @@ class ResponseGenerator:
         if result:
             return result['response_text']
         return "Hello! How can I help you today?"
+    
+    def ambiguous_action_response(self, conflicting_actions):
+        """Generate response for ambiguous commands with multiple actions"""
+        actions_text = ', '.join(conflicting_actions)
+        return (f"⚠️ Your message contains multiple actions ({actions_text}). "
+                f"Please use only one action per message. For example:\n"
+                f"• 'spent 150 on food' - to record\n"
+                f"• 'delete food' - to delete\n"
+                f"• 'update 250 in food on december 1' - to update")
     
     def transaction_recorded_response(self, amount, category_name, action):
         """Generate response for recorded transaction"""

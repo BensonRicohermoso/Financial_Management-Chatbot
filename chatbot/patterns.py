@@ -95,6 +95,31 @@ def is_help_request(message):
     return any(keyword in message_lower for keyword in HELP_KEYWORDS)
 
 
+def has_conflicting_keywords(message):
+    """Check if message contains multiple conflicting action keywords"""
+    message_lower = message.lower()
+    
+    actions_found = []
+    
+    if any(keyword in message_lower for keyword in DELETE_KEYWORDS):
+        actions_found.append('delete')
+    
+    if any(keyword in message_lower for keyword in UPDATE_KEYWORDS):
+        actions_found.append('update')
+    
+    if any(keyword in message_lower for keyword in EXPENSE_KEYWORDS):
+        actions_found.append('expense')
+    
+    if any(keyword in message_lower for keyword in SAVINGS_KEYWORDS):
+        actions_found.append('savings')
+    
+    # If more than one action type detected
+    if len(actions_found) > 1:
+        return True, actions_found
+    
+    return False, []
+
+
 def is_update_request(message):
     """Check if message is an update request"""
     message_lower = message.lower()
